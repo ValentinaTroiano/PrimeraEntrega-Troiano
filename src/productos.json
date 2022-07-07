@@ -1,0 +1,32 @@
+[
+    {
+      "id":1,
+      "name": "escuadra",
+      
+      "description": "",
+      "thumbnail":
+      "http://http2.mlstatic.com/D_656522-MLA44388481439_122020-I.jpg",
+      "price": 700
+      
+    },
+    {
+        "id":2,
+        "name": "globo terraqueo",
+        
+        "description": "",
+        "thumbnail":
+        "http://http2.mlstatic.com/D_920961-MLA31579848144_072019-I.jpg",
+        "price": 3000
+    
+      },
+      {
+        "id":3,
+        "name": "calculadora",
+        
+        "description": "",
+        "thumbnail":
+        "http://http2.mlstatic.com/D_875724-MLA31116238699_062019-O.jpg",
+        "price": 1500
+       
+      }
+]

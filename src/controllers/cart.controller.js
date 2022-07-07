@@ -1,0 +1,127 @@
+
+
+
+const cartController = {
+  cartList: async ( req, res ) =>
+  {
+    try {
+      const allCarts = await cartDB.getAll()
+      res.json( allCarts )
+    } catch ( error ) {
+      console.log( `ERROR: ${ error }` )
+    }
+  },
+
+  cartProductList: async ( req, res ) =>
+  {
+    try {
+      const cartId = req.params.id
+      const cartFound = await cartDB.getById( cartId )
+
+      if ( !cartFound ) {
+        res.send( { error: 'Cart not found.' } )
+      } else {
+        res.json( cartFound.productos )
+      }
+    } catch ( error ) {
+      console.log( `ERROR: ${ error }` )
+    }
+  },
+
+  createNewCart: async ( req, res ) =>
+  {
+    try {
+      const allCarts = await cartDB.getAll()
+
+      const getNewId = () =>
+      {
+        let lastID = 0
+        if ( allCarts.length ) {
+          lastID = allCarts[ allCarts.length - 1 ].id
+        }
+        return lastID + 1
+      }
+
+      const newCart = {
+        id: getNewId(),
+        productos: [],
+      }
+
+      await cartDB.addItem( newCart )
+      res.json( newCart.id )
+    } catch ( error ) {
+      console.log( `ERROR: ${ error }` )
+    }
+  },
+//Para incorporar productos al carrito por su id de producto
+  addProductToCart: async ( req, res ) =>
+  {
+    try {
+      const cartId = req.params.id
+      const prodId = req.params.id_prod
+
+      const cartFound = await cartDB.getById( cartId )
+      const productFound = await productDB.getById( prodId )
+
+      if ( !cartFound ) {
+        res.send( { error: 'Cart not found.' } )
+      } else if ( !productFound ) {
+        res.send( { error: 'Product not found.' } )
+      } else {
+        await cartDB.addItemInto( cartFound.id, productFound )
+        const updatedCart = await cartDB.getById( cartId )
+        res.json( updatedCart )
+      }
+    } catch ( error ) {
+      console.log( `ERROR: ${ error }` )
+    }
+  },
+
+
+
+//Eliminar un producto del carrito por su id 
+
+  deleteProductFromCart: async ( req, res ) =>
+  {
+    try {
+      const cartId = req.params.id
+      const prodId = req.params.id_prod
+
+      const cartFound = await cartDB.getById( cartId )
+      const productFound = await productDB.getById( prodId )
+
+      if ( !cartFound ) {
+        res.send( { error: 'Cart not found.' } )
+      } else if ( !productFound ) {
+        res.send( { error: 'Product not found.' } )
+      } else {
+        await cartDB.removeItemFrom( cartFound.id, productFound.id )
+        const updatedCart = await cartDB.getById( cartId )
+        res.json( updatedCart )
+      }
+    } catch ( error ) {
+      console.log( `ERROR: ${ error }` )
+    }
+  },
+
+  emptyCart: async ( req, res ) =>
+  {
+    try {
+      const cartId = req.params.id
+      const cartFound = await cartDB.getById( cartId )
+
+      if ( !cartFound ) {
+        res.send( { error: 'Cart not found.' } )
+      } else {
+        await cartDB.emptyContainer( cartId )
+        const updatedCart = await cartDB.getById( cartId )
+        res.json( updatedCart )
+      }
+    } catch ( error ) {
+      console.log( `ERROR: ${ error }` )
+    }
+  },
+}
+
+
+export default cartController
