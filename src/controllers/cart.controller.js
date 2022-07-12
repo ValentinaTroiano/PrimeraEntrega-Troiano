@@ -1,4 +1,5 @@
-
+const cartDB = new Products( 'cart' )
+const productDB = new Products( 'products' )
 
 
 const cartController = {

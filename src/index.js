@@ -1,5 +1,5 @@
 const express = require("express");
-const { PORT } = require("./server");
+const { PORT } = require("./constants");
 const cors = require("cors");
 const morgan = require("morgan");
 

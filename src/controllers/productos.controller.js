@@ -1,5 +1,7 @@
-import { FILENAME_DATABASE } from "../server";
+import { FILENAME_DATABASE } from "../constants";
 import { promises } from "fs";
+
+
 
 export async function getProducts(req, res) {
   try {
@@ -9,6 +11,7 @@ export async function getProducts(req, res) {
     res.json({ msg: `Error: ${error.message}` });
   }
 }
+//get producto byID
 export async function getProductById(req, res) {
   const { id } = req.params;
 
@@ -29,6 +32,7 @@ export async function getProductById(req, res) {
     res.json({ msg: `Error: ${error.message}` });
   }
 }
+//nuevo producto
 export async function createProduct(req, res) {
   const { name, description, thumbnail, price } = req.body;
 
@@ -60,38 +64,47 @@ export async function createProduct(req, res) {
     res.json({ msg: `Error: ${error.message}` });
   }
 }
-export
-  // Update Product
-  async function updateProduct(objProd) {
-  try {
-    let all = await this.getAllProducts();
-    all = all.map((item) => (item.id !== objProd.id ? item : objProd));
+// Update Product
 
-    await promises.writeFile(
-      `src/data/${this.name}.json`,
-      JSON.stringify(all)
-    );
-    return all;
-  } catch (error) {
-    console.log(error);
-  }
-}
-export
-  // Delete Product By ID
-  async function deleteProduct(id) {
-  try {
-    const all = await this.getAllProducts();
-    const allFilterproducts = all.filter((item) => item.id !== id);
-    if (JSON.stringify(all) !== JSON.stringify(allFilterproducts)) {
-      await promises.writeFile(
-        `src/data/${this.name}.json`,
-        JSON.stringify(allFilterproducts)
-      );
-      return allFilterproducts;
-    } else {
-      return false;
+
+export async function updateProduct(req,res) {
+try {
+  const prodId = req.params.id
+  const productFound = await productDB.getById( prodId )
+  
+  if ( !productFound ) {
+    res.send( { error: 'Producto no encontrado' } )
+  } else {
+    const updateProduct = {
+      id: productFound.id,
+      nombre: productFound.nombre,
+      descripcion: productFound.descripcion,
+      precio: productFound.precio,
+      stock: productFound.stock,
     }
-  } catch (err) {
-    console.log(err);
+
+    await productDB.updateById( updateProduct )
+
+    res.json( updateProduct )
+  }
+} catch ( error ) {
+  console.log( `ERROR: ${ error }` )
+}
+
+}
+//eliminar producto
+export async function deleteProduct ( req, res )
+{
+  try {
+    const prodId = req.params.id
+    const response = await productDB.deleteById( prodId )
+
+    if ( !response ) {
+      res.send( `El producto ${ prodId } no existe` )
+    } else {
+      res.send( `El prodcuto ${ prodId } fue eliminado` )
+    }
+  } catch ( error ) {
+    console.log( `ERROR: ${ error }` )
   }
 }
